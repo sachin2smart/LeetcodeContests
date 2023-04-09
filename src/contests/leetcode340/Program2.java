@@ -1,8 +1,6 @@
 package src.contests.leetcode340;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 //  https://leetcode.com/problems/sum-of-distances/
 /*
@@ -33,6 +31,7 @@ import java.util.List;
  */
 
 public class Program2 {
+    // This give TLE exception
     public long[] distance(int[] nums) {
         int n = nums.length;
         long[] arr = new long[n];
@@ -69,10 +68,43 @@ public class Program2 {
         return arr;
     }
 
+    public long[] distance2(int[] nums) {
+        int n = nums.length;
+        long[] arr = new long[n];
+        Map<Integer, List<Integer>> map = new HashMap<>();
+
+        for(int i = 0; i < n; i++) {
+            List<Integer> list = map.getOrDefault(nums[i],new ArrayList<>());
+            list.add(i);
+            map.put(nums[i], list);
+        }
+
+        for(List<Integer> list: map.values()) {
+            long lsum = 0, rsum = 0;
+            long lptr = 0, rptr = list.size();
+
+            for(int idx : list)
+                rsum += idx;
+
+            for(int idx : list){
+                rptr--;
+                rsum -= idx;
+                arr[idx] = (idx * lptr - lsum) + (rsum - idx * rptr);
+                lsum += idx;
+                lptr++;
+            }
+        }
+        return arr;
+    }
+
     public static void main(String[] args) {
         Program2 program2 = new Program2();
         System.out.println(Arrays.toString(program2.distance(new int[]{1,3,1,1,2})));    //    [5,0,3,4,0]
         System.out.println(Arrays.toString(program2.distance(new int[]{0,5,3})));       //     [0,0,0]
         System.out.println(Arrays.toString(program2.distance(new int[]{1,3,1,1,3})));   //     [5,3,3,4,4]
+        System.out.println("------------------------------");
+        System.out.println(Arrays.toString(program2.distance2(new int[]{1,3,1,1,2})));    //    [5,0,3,4,0]
+        System.out.println(Arrays.toString(program2.distance2(new int[]{0,5,3})));       //     [0,0,0]
+        System.out.println(Arrays.toString(program2.distance2(new int[]{1,3,1,1,3})));   //     [5,3,3,4,4]
     }
 }
